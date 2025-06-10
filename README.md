@@ -1,0 +1,1 @@
+A tool for automatically replacing sql placeholders.
