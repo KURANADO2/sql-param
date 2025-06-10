@@ -1,3 +1,5 @@
+use std::io::stdin;
+
 #[derive(Debug)]
 struct Value {
     field_value: String,
@@ -48,7 +50,16 @@ fn replace_placeholder(sql: &str, values: Vec<Value>) -> String {
 }
 
 fn main() {
-    let sql = "select * from user where username = ? and email = ? and age = ? and married = ?;";
-    let value = "zhangsan(String), null, 18(Integer), 1(Integer)";
-    println!("{}", replace_placeholder(sql, values(value)));
+    println!("Please input sql with placeholders.");
+    let mut sql = String::new();
+    stdin().read_line(&mut sql).expect("Failed to read sql");
+
+    println!("Please input sql value.");
+    let mut value = String::new();
+    stdin().read_line(&mut value).expect("Failed to read sql");
+
+    println!(
+        "{}",
+        replace_placeholder(sql.as_str(), values(value.as_str()))
+    );
 }
