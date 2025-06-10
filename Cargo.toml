@@ -3,5 +3,10 @@ name = "sql-param"
 version = "0.1.0"
 edition = "2021"
 description = "A tool for automatically replacing sql placeholders"
+license = "MIT"
+readme = "README.md"
+authors = ["KURANADO <jingxinling1024@163.com>"]
+homepage = "https://github.com/KURANADO2/sql-param"
+repository = "https://github.com/KURANADO2/sql-param"
 
 [dependencies]
