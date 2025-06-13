@@ -10,9 +10,12 @@ cargo install sql-param
 
 ```bash
 $ sql-param
-Please input sql with placeholders.
-select * from user where username = ? and email = ? and age = ? and married = ?;
-Please input sql value.
-zhangsan(String), null, 18(Integer), 1(Integer)
-select * from user where username = 'zhangsan' and email = null and age = 18 and married = 1;
+> Input sql with placeholders...
+UPDATE user SET name = ?, age = ?, update_time = ?, id_card = ? WHERE id = ? AND deleted = ?;   
+
+> Input sql values with type...
+zhangsan(String), 18(Integer), 2025-06-13 16:44:56.499(Timestamp), 123456789(Long), 1(Integer), 0(Integer);
+
+> Result:
+UPDATE user SET name = 'zhangsan', age = 18, update_time = '2025-06-13 16:44:56.499', id_card = 123456789 WHERE id = 1 AND deleted = 0;
 ```
