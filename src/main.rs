@@ -8,7 +8,7 @@ struct Value {
 
 impl Value {
     fn is_string(&self) -> bool {
-        self.field_type == "String"
+        self.field_type == "String" || self.field_type == "Timestamp"
     }
 }
 
@@ -50,15 +50,16 @@ fn replace_placeholder(sql: &str, values: Vec<Value>) -> String {
 }
 
 fn main() {
-    println!("Please input sql with placeholders.");
+    println!("> Input sql with placeholders...");
     let mut sql = String::new();
     stdin().read_line(&mut sql).expect("Failed to read sql");
 
-    println!("Please input sql value.");
+    println!("\n> Input sql values with type...");
     let mut value = String::new();
-    stdin().read_line(&mut value).expect("Failed to read sql");
+    stdin().read_line(&mut value).expect("Failed to read value");
 
-    println!(
+    println!("\n> Result:");
+    print!(
         "{}",
         replace_placeholder(sql.as_str(), values(value.as_str()))
     );
