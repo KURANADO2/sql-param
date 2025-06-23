@@ -10,3 +10,9 @@ homepage = "https://github.com/KURANADO2/sql-param"
 repository = "https://github.com/KURANADO2/sql-param"
 
 [dependencies]
+crossterm = "0.29.0"
+ratatui = "0.29.0"
+arboard = "3.5.0"
+strum = "0.27.1"
+strum_macros = "0.27.1"
+lazy_static = "1.5.0"
