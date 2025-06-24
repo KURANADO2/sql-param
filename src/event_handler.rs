@@ -37,7 +37,6 @@ pub fn handle_key(app: &mut App, key: KeyEvent) {
 
 fn handle_common_key(app: &mut App, key: KeyEvent) {
     match key.code {
-        KeyCode::Char('q') => app.should_exit = true,
         KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
             app.input_clear();
         }
