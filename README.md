@@ -11,8 +11,8 @@ cargo install sql-param
 ## Usage
 
 Simply run the `sql-param` command to open the TUI interface.
-First, enter the SQL statement with `?` placeholders. Then, use the `Tab` key to switch focus and input the corresponding
-values. Press Tab again to view the final SQL result with placeholders automatically replaced. The result is also
+First, enter the SQL statement with `?` placeholders. Then, use the mouse click or `Tab` key to switch focus and input the corresponding
+values. Press `Tab` or mouse click again to view the final SQL result with placeholders automatically replaced. The result is also
 automatically copied to the system clipboard, so you can simply paste it anywhere using Command+V(MacOS)/Ctrl+V(Linux or Windows).
 
 Here is an example:
