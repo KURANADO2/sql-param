@@ -16,32 +16,7 @@ pub fn handle_key(app: &mut App, key: KeyEvent) {
                 app.current_area = app.prev_area();
                 app.result = replace_placeholder(app.sql_input.as_str(), app.value_input.as_str());
             }
-            KeyCode::Char('q') => app.should_exit = true,
-            KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
-                app.input_clear();
-            }
-            KeyCode::Char(char) => {
-                app.input_char(char);
-            }
-            KeyCode::Backspace => {
-                app.input_backspace();
-            }
-            KeyCode::Delete => {
-                app.input_delete();
-            }
-            KeyCode::Left => {
-                app.move_cursor_left();
-            }
-            KeyCode::Right => {
-                app.move_cursor_right();
-            }
-            KeyCode::Home => {
-                app.move_cursor_home();
-            }
-            KeyCode::End => {
-                app.move_cursor_end();
-            }
-            _ => return,
+            _other => handle_common_key(app, key),
         },
         AreaEnum::Value => match key.code {
             KeyCode::Tab => {
@@ -49,32 +24,7 @@ pub fn handle_key(app: &mut App, key: KeyEvent) {
                 app.result = replace_placeholder(app.sql_input.as_str(), app.value_input.as_str());
             }
             KeyCode::BackTab => app.current_area = app.prev_area(),
-            KeyCode::Char('q') => app.should_exit = true,
-            KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
-                app.input_clear();
-            }
-            KeyCode::Char(char) => {
-                app.input_char(char);
-            }
-            KeyCode::Backspace => {
-                app.input_backspace();
-            }
-            KeyCode::Delete => {
-                app.input_delete();
-            }
-            KeyCode::Left => {
-                app.move_cursor_left();
-            }
-            KeyCode::Right => {
-                app.move_cursor_right();
-            }
-            KeyCode::Home => {
-                app.move_cursor_home();
-            }
-            KeyCode::End => {
-                app.move_cursor_end();
-            }
-            _ => return,
+            _other => handle_common_key(app, key),
         },
         AreaEnum::Result => match key.code {
             KeyCode::Tab => app.current_area = app.next_area(),
@@ -82,6 +32,37 @@ pub fn handle_key(app: &mut App, key: KeyEvent) {
             KeyCode::Char('q') => app.should_exit = true,
             _ => return,
         },
+    }
+}
+
+fn handle_common_key(app: &mut App, key: KeyEvent) {
+    match key.code {
+        KeyCode::Char('q') => app.should_exit = true,
+        KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+            app.input_clear();
+        }
+        KeyCode::Char(char) => {
+            app.input_char(char);
+        }
+        KeyCode::Backspace => {
+            app.input_backspace();
+        }
+        KeyCode::Delete => {
+            app.input_delete();
+        }
+        KeyCode::Left => {
+            app.move_cursor_left();
+        }
+        KeyCode::Right => {
+            app.move_cursor_right();
+        }
+        KeyCode::Home => {
+            app.move_cursor_home();
+        }
+        KeyCode::End => {
+            app.move_cursor_end();
+        }
+        _ => return,
     }
 }
 
