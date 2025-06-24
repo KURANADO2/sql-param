@@ -31,7 +31,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    // 隐藏默认光标
+    // Hide default cursor
     terminal.hide_cursor()?;
 
     // create app and run it
