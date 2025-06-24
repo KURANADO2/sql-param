@@ -1,6 +1,8 @@
 use crate::app::{App, AreaEnum};
 use crate::core::replace_placeholder;
-use crossterm::event::{KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
+use crossterm::event::{
+    KeyCode, KeyEvent, KeyEventKind, KeyModifiers, MouseButton, MouseEvent, MouseEventKind,
+};
 
 pub fn handle_key(app: &mut App, key: KeyEvent) {
     if key.kind != KeyEventKind::Press {
@@ -54,5 +56,16 @@ pub fn handle_paste(app: &mut App, data: String) {
         AreaEnum::Sql => app.sql_input.push_str(data.as_str()),
         AreaEnum::Value => app.value_input.push_str(data.as_str()),
         _ => return,
+    }
+}
+
+pub fn handle_mouse(app: &mut App, mouse: MouseEvent) {
+    if let MouseEventKind::Down(MouseButton::Left) = mouse.kind {
+        if let Some(clicked_area) = app.get_area_by_coordinate(mouse.column, mouse.row) {
+            app.current_area = clicked_area;
+            if clicked_area == AreaEnum::Result {
+                app.result = replace_placeholder(app.sql_input.as_str(), app.value_input.as_str());
+            }
+        }
     }
 }

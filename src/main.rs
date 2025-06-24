@@ -4,7 +4,7 @@ mod event_handler;
 mod ui;
 
 use crate::app::App;
-use crate::event_handler::{handle_key, handle_paste};
+use crate::event_handler::{handle_key, handle_mouse, handle_paste};
 use crate::ui::ui;
 use crossterm::event::{
     DisableBracketedPaste, DisableMouseCapture, EnableBracketedPaste, EnableMouseCapture, Event,
@@ -55,6 +55,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> Result<(), 
             match event {
                 Event::Key(key) => handle_key(app, key),
                 Event::Paste(data) => handle_paste(app, data),
+                Event::Mouse(mouse) => handle_mouse(app, mouse),
                 _ => {}
             }
         };

@@ -25,6 +25,11 @@ pub fn ui(frame: &mut Frame, app: &mut App) {
         .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
         .split(layout[0]);
 
+    // recording area coordinate
+    app.set_area_coordinate(AreaEnum::Sql, input_layout[0]);
+    app.set_area_coordinate(AreaEnum::Value, input_layout[1]);
+    app.set_area_coordinate(AreaEnum::Result, layout[1]);
+
     // render body
     // render sql
     render_body(app, frame, input_layout[0], AreaEnum::Sql);
@@ -58,7 +63,10 @@ fn render_body(app: &mut App, frame: &mut Frame, area: Rect, area_enum: AreaEnum
 
 fn render_footer(frame: &mut Frame, area: Rect) {
     frame.render_widget(
-        Paragraph::new("Tab: Switch Focus | Ctrl + l: Clear Area | q: Exit").block(
+        Paragraph::new(
+            "Tab/Mouse: Switch | Ctrl + l: Clear | q: Exit",
+        )
+        .block(
             Block::new()
                 .title("Help")
                 .borders(Borders::ALL)

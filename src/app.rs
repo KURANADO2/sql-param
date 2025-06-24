@@ -1,3 +1,5 @@
+use ratatui::layout::Rect;
+use std::collections::HashMap;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
@@ -7,9 +9,10 @@ pub struct App {
     pub result: String,
     pub current_area: AreaEnum,
     pub should_exit: bool,
+    pub area_coordinates: HashMap<AreaEnum, Rect>,
 }
 
-#[derive(EnumIter, PartialEq, Clone, Copy)]
+#[derive(EnumIter, PartialEq, Clone, Copy, Hash, Eq)]
 pub enum AreaEnum {
     Sql,
     Value,
@@ -24,6 +27,7 @@ impl App {
             result: String::new(),
             current_area: AreaEnum::Sql,
             should_exit: false,
+            area_coordinates: HashMap::new(),
         }
     }
 
@@ -47,6 +51,19 @@ impl App {
             AreaEnum::Value => self.value_input.clone(),
             AreaEnum::Result => self.result.clone(),
         }
+    }
+
+    pub fn set_area_coordinate(&mut self, area: AreaEnum, rect: Rect) {
+        self.area_coordinates.insert(area, rect);
+    }
+
+    pub fn get_area_by_coordinate(&self, x: u16, y: u16) -> Option<AreaEnum> {
+        for (area, rect) in &self.area_coordinates {
+            if x >= rect.x && x < rect.x + rect.width && y >= rect.y && y < rect.y + rect.height {
+                return Some(*area);
+            }
+        }
+        None
     }
 }
 
