@@ -1,12 +1,12 @@
 use crate::app::{App, AreaEnum};
 use lazy_static::lazy_static;
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
-use ratatui::style::{Color, Style};
+use ratatui::style::{Color, Style, Stylize};
 use ratatui::widgets::{Block, BorderType, Borders, Paragraph, Wrap};
 use ratatui::Frame;
 
 lazy_static! {
-    pub static ref FOCUSED_STYLE: Style = Style::default().fg(Color::Green);
+    pub static ref FOCUSED_STYLE: Style = Style::default().fg(Color::Green).bold();
     pub static ref NORMAL_STYLE: Style = Style::default();
 }
 
