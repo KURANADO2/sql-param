@@ -10,6 +10,8 @@ pub struct App {
     pub current_area: AreaEnum,
     pub should_exit: bool,
     pub area_coordinates: HashMap<AreaEnum, Rect>,
+    pub sql_cursor_position: usize,
+    pub value_cursor_position: usize,
 }
 
 #[derive(EnumIter, PartialEq, Clone, Copy, Hash, Eq)]
@@ -28,6 +30,8 @@ impl App {
             current_area: AreaEnum::Sql,
             should_exit: false,
             area_coordinates: HashMap::new(),
+            sql_cursor_position: 0,
+            value_cursor_position: 0,
         }
     }
 
@@ -50,6 +54,26 @@ impl App {
             AreaEnum::Sql => self.sql_input.clone(),
             AreaEnum::Value => self.value_input.clone(),
             AreaEnum::Result => self.result.clone(),
+        }
+    }
+
+    pub fn cursor_position(&self, area_enum: AreaEnum) -> usize {
+        match area_enum {
+            AreaEnum::Sql => self.sql_cursor_position,
+            AreaEnum::Value => self.value_cursor_position,
+            AreaEnum::Result => 0,
+        }
+    }
+
+    pub fn set_cursor_position(&mut self, area_enum: AreaEnum, position: usize) {
+        match area_enum {
+            AreaEnum::Sql => {
+                self.sql_cursor_position = position.min(self.sql_input.len());
+            }
+            AreaEnum::Value => {
+                self.value_cursor_position = position.min(self.value_input.len());
+            }
+            AreaEnum::Result => {}
         }
     }
 

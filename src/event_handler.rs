@@ -18,11 +18,44 @@ pub fn handle_key(app: &mut App, key: KeyEvent) {
             }
             KeyCode::Char('q') => app.should_exit = true,
             KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
-                app.sql_input.clear()
+                app.sql_input.clear();
+                app.set_cursor_position(AreaEnum::Sql, 0);
             }
-            KeyCode::Char(char) => app.sql_input.push(char),
+            KeyCode::Char(char) => {
+                let pos = app.cursor_position(AreaEnum::Sql);
+                app.sql_input.insert(pos, char);
+                app.set_cursor_position(AreaEnum::Sql, pos + 1);
+            }
             KeyCode::Backspace => {
-                app.sql_input.pop();
+                let pos = app.cursor_position(AreaEnum::Sql);
+                if pos > 0 {
+                    app.sql_input.remove(pos - 1);
+                    app.set_cursor_position(AreaEnum::Sql, pos - 1);
+                }
+            }
+            KeyCode::Delete => {
+                let pos = app.cursor_position(AreaEnum::Sql);
+                if pos < app.sql_input.len() {
+                    app.sql_input.remove(pos);
+                }
+            }
+            KeyCode::Left => {
+                let pos = app.cursor_position(AreaEnum::Sql);
+                if pos > 0 {
+                    app.set_cursor_position(AreaEnum::Sql, pos - 1);
+                }
+            }
+            KeyCode::Right => {
+                let pos = app.cursor_position(AreaEnum::Sql);
+                if pos < app.sql_input.len() {
+                    app.set_cursor_position(AreaEnum::Sql, pos + 1);
+                }
+            }
+            KeyCode::Home => {
+                app.set_cursor_position(AreaEnum::Sql, 0);
+            }
+            KeyCode::End => {
+                app.set_cursor_position(AreaEnum::Sql, app.sql_input.len());
             }
             _ => return,
         },
@@ -34,11 +67,44 @@ pub fn handle_key(app: &mut App, key: KeyEvent) {
             KeyCode::BackTab => app.current_area = app.prev_area(),
             KeyCode::Char('q') => app.should_exit = true,
             KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
-                app.value_input.clear()
+                app.value_input.clear();
+                app.set_cursor_position(AreaEnum::Value, 0);
             }
-            KeyCode::Char(char) => app.value_input.push(char),
+            KeyCode::Char(char) => {
+                let pos = app.cursor_position(AreaEnum::Value);
+                app.value_input.insert(pos, char);
+                app.set_cursor_position(AreaEnum::Value, pos + 1);
+            }
             KeyCode::Backspace => {
-                app.value_input.pop();
+                let pos = app.cursor_position(AreaEnum::Value);
+                if pos > 0 {
+                    app.value_input.remove(pos - 1);
+                    app.set_cursor_position(AreaEnum::Value, pos - 1);
+                }
+            }
+            KeyCode::Delete => {
+                let pos = app.cursor_position(AreaEnum::Value);
+                if pos < app.value_input.len() {
+                    app.value_input.remove(pos);
+                }
+            }
+            KeyCode::Left => {
+                let pos = app.cursor_position(AreaEnum::Value);
+                if pos > 0 {
+                    app.set_cursor_position(AreaEnum::Value, pos - 1);
+                }
+            }
+            KeyCode::Right => {
+                let pos = app.cursor_position(AreaEnum::Value);
+                if pos < app.value_input.len() {
+                    app.set_cursor_position(AreaEnum::Value, pos + 1);
+                }
+            }
+            KeyCode::Home => {
+                app.set_cursor_position(AreaEnum::Value, 0);
+            }
+            KeyCode::End => {
+                app.set_cursor_position(AreaEnum::Value, app.value_input.len());
             }
             _ => return,
         },
@@ -53,8 +119,16 @@ pub fn handle_key(app: &mut App, key: KeyEvent) {
 
 pub fn handle_paste(app: &mut App, data: String) {
     match app.current_area {
-        AreaEnum::Sql => app.sql_input.push_str(data.as_str()),
-        AreaEnum::Value => app.value_input.push_str(data.as_str()),
+        AreaEnum::Sql => {
+            let pos = app.cursor_position(AreaEnum::Sql);
+            app.sql_input.insert_str(pos, &data);
+            app.set_cursor_position(AreaEnum::Sql, pos + data.len());
+        }
+        AreaEnum::Value => {
+            let pos = app.cursor_position(AreaEnum::Value);
+            app.value_input.insert_str(pos, &data);
+            app.set_cursor_position(AreaEnum::Value, pos + data.len());
+        }
         _ => return,
     }
 }
