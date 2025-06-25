@@ -1,5 +1,3 @@
-use arboard::Clipboard;
-
 #[derive(Debug)]
 struct Value {
     field_value: String,
@@ -28,6 +26,10 @@ fn values(value: &str) -> Vec<Value> {
 }
 
 pub fn replace_placeholder(sql: &str, value: &str) -> String {
+    if value.is_empty() {
+        return sql.to_string();
+    }
+
     let mut result = String::new();
 
     let values = values(value);
@@ -48,11 +50,6 @@ pub fn replace_placeholder(sql: &str, value: &str) -> String {
         }
     }
 
-    Clipboard::new()
-        .unwrap()
-        .set_text(&result)
-        .expect("failed to set clipboard");
-
     result
 }
 
@@ -65,5 +62,26 @@ mod test {
         let sql = String::from("UPDATE user SET name = ?, age = ?, update_time = ?, id_card = ? WHERE id = ? AND deleted = ?;");
         let value = String::from("zhangsan(String), 18(Integer), 2025-06-13 16:44:56.499(Timestamp), 123456789(Long), 1(Integer), 0(Integer);");
         assert_eq!("UPDATE user SET name = 'zhangsan', age = 18, update_time = '2025-06-13 16:44:56.499', id_card = 123456789 WHERE id = 1 AND deleted = 0;", replace_placeholder(sql.as_str(), value.as_str()));
+    }
+
+    #[test]
+    fn test_empty_sql() {
+        let sql = String::from("");
+        let value = String::from("zhangsan(String), 18(Integer), 2025-06-13 16:44:56.499(Timestamp), 123456789(Long), 1(Integer), 0(Integer);");
+        assert_eq!("", replace_placeholder(sql.as_str(), value.as_str()));
+    }
+
+    #[test]
+    fn test_empty_value() {
+        let sql = String::from("UPDATE user SET name = ?, age = ?, update_time = ?, id_card = ? WHERE id = ? AND deleted = ?;");
+        let value = String::from("");
+        assert_eq!("UPDATE user SET name = ?, age = ?, update_time = ?, id_card = ? WHERE id = ? AND deleted = ?;", replace_placeholder(sql.as_str(), value.as_str()));
+    }
+
+    #[test]
+    fn test_empty_all() {
+        let sql = String::from("");
+        let value = String::from("");
+        assert_eq!("", replace_placeholder(sql.as_str(), value.as_str()));
     }
 }

@@ -1,4 +1,5 @@
 use crate::core::replace_placeholder;
+use arboard::Clipboard;
 use ratatui::layout::Rect;
 use std::collections::HashMap;
 use strum::IntoEnumIterator;
@@ -109,6 +110,11 @@ impl App {
     pub fn calculate_result(&mut self) {
         self.result =
             replace_placeholder(self.get_sql_text().as_str(), self.get_value_text().as_str());
+
+        Clipboard::new()
+            .unwrap()
+            .set_text(self.result.as_str())
+            .expect("failed to set clipboard");
     }
 }
 
