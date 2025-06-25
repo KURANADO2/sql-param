@@ -73,30 +73,24 @@ impl App {
     }
 
     pub fn input_char(&mut self, char: char) {
-        match self.current_area {
-            AreaEnum::Sql => {
-                self.sql_input.insert_char(char);
-            }
-            AreaEnum::Value => {
-                self.value_input.insert_char(char);
-            }
-            _ => return,
+        if let Some(input) = self.get_current_input() {
+            input.insert_char(char);
         }
     }
 
     pub fn input_backspace(&mut self) {
-        match self.current_area {
-            AreaEnum::Sql => {
-                self.sql_input.delete_char();
-            }
-            AreaEnum::Value => {
-                self.value_input.delete_char();
-            }
-            _ => return,
+        if let Some(input) = self.get_current_input() {
+            input.delete_char();
         }
     }
 
-    pub fn get_current_textarea(&mut self) -> Option<&mut TextArea<'static>> {
+    pub fn input_delete(&mut self) {
+        if let Some(input) = self.get_current_input() {
+            input.delete_next_char();
+        }
+    }
+
+    pub fn get_current_input(&mut self) -> Option<&mut TextArea<'static>> {
         match self.current_area {
             AreaEnum::Sql => Some(&mut self.sql_input),
             AreaEnum::Value => Some(&mut self.value_input),
@@ -113,7 +107,8 @@ impl App {
     }
 
     pub fn calculate_result(&mut self) {
-        self.result = replace_placeholder(self.get_sql_text().as_str(), self.get_value_text().as_str());
+        self.result =
+            replace_placeholder(self.get_sql_text().as_str(), self.get_value_text().as_str());
     }
 }
 

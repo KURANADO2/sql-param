@@ -49,9 +49,42 @@ fn handle_common_key(app: &mut App, key: KeyEvent) {
         KeyCode::Backspace => {
             app.input_backspace();
         }
+        KeyCode::Delete => {
+            app.input_delete();
+        }
         KeyCode::Enter => {
-            if let Some(textarea) = app.get_current_textarea() {
+            if let Some(textarea) = app.get_current_input() {
                 textarea.insert_newline();
+            }
+        }
+        KeyCode::Up => {
+            if let Some(textarea) = app.get_current_input() {
+                textarea.move_cursor(tui_textarea::CursorMove::Up);
+            }
+        }
+        KeyCode::Down => {
+            if let Some(textarea) = app.get_current_input() {
+                textarea.move_cursor(tui_textarea::CursorMove::Down);
+            }
+        }
+        KeyCode::Left => {
+            if let Some(textarea) = app.get_current_input() {
+                textarea.move_cursor(tui_textarea::CursorMove::Back);
+            }
+        }
+        KeyCode::Right => {
+            if let Some(textarea) = app.get_current_input() {
+                textarea.move_cursor(tui_textarea::CursorMove::Forward);
+            }
+        }
+        KeyCode::Home => {
+            if let Some(textarea) = app.get_current_input() {
+                textarea.move_cursor(tui_textarea::CursorMove::Head);
+            }
+        }
+        KeyCode::End => {
+            if let Some(textarea) = app.get_current_input() {
+                textarea.move_cursor(tui_textarea::CursorMove::End);
             }
         }
         _ => return,
