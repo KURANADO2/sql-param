@@ -46,21 +46,6 @@ fn handle_common_key(app: &mut App, key: KeyEvent) {
         KeyCode::Backspace => {
             app.input_backspace();
         }
-        KeyCode::Delete => {
-            app.input_delete();
-        }
-        KeyCode::Left => {
-            app.move_cursor_left();
-        }
-        KeyCode::Right => {
-            app.move_cursor_right();
-        }
-        KeyCode::Home => {
-            app.move_cursor_home();
-        }
-        KeyCode::End => {
-            app.move_cursor_end();
-        }
         _ => return,
     }
 }
@@ -68,14 +53,10 @@ fn handle_common_key(app: &mut App, key: KeyEvent) {
 pub fn handle_paste(app: &mut App, data: String) {
     match app.current_area {
         AreaEnum::Sql => {
-            let pos = app.get_cursor_position();
-            app.sql_input.insert_str(pos, &data);
-            app.set_cursor_position(AreaEnum::Sql, pos + data.len());
+            app.sql_input.push_str(&data);
         }
         AreaEnum::Value => {
-            let pos = app.get_cursor_position();
-            app.value_input.insert_str(pos, &data);
-            app.set_cursor_position(AreaEnum::Value, pos + data.len());
+            app.value_input.push_str(&data);
         }
         _ => return,
     }

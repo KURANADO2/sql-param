@@ -31,9 +31,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    // Hide default cursor
-    terminal.hide_cursor()?;
-
     // create app and run it
     let mut app = App::new();
     let _ = run_app(&mut terminal, &mut app);

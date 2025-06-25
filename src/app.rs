@@ -10,8 +10,6 @@ pub struct App {
     pub current_area: AreaEnum,
     pub should_exit: bool,
     pub area_coordinates: HashMap<AreaEnum, Rect>,
-    pub sql_cursor_position: usize,
-    pub value_cursor_position: usize,
 }
 
 #[derive(EnumIter, PartialEq, Clone, Copy, Hash, Eq)]
@@ -30,8 +28,6 @@ impl App {
             current_area: AreaEnum::Sql,
             should_exit: false,
             area_coordinates: HashMap::new(),
-            sql_cursor_position: 0,
-            value_cursor_position: 0,
         }
     }
 
@@ -70,74 +66,7 @@ impl App {
         None
     }
 
-    pub fn set_cursor_position(&mut self, area_enum: AreaEnum, position: usize) {
-        match area_enum {
-            AreaEnum::Sql => {
-                self.sql_cursor_position = position.min(self.sql_input.len());
-            }
-            AreaEnum::Value => {
-                self.value_cursor_position = position.min(self.value_input.len());
-            }
-            AreaEnum::Result => {}
-        }
-    }
-
-    pub fn get_cursor_position(&self) -> usize {
-        match self.current_area {
-            AreaEnum::Sql => self.sql_cursor_position,
-            AreaEnum::Value => self.value_cursor_position,
-            AreaEnum::Result => 0,
-        }
-    }
-
-    pub fn move_cursor_left(&mut self) {
-        self.move_cursor_left_with_pos(self.current_area, self.get_cursor_position());
-    }
-
-    pub fn move_cursor_left_with_pos(&mut self, area_enum: AreaEnum, pos: usize) {
-        if pos > 0 {
-            self.set_cursor_position(area_enum, pos - 1)
-        }
-    }
-
-    pub fn move_cursor_right(&mut self) {
-        self.move_cursor_right_with_pos(self.current_area, self.get_cursor_position());
-    }
-
-    pub fn move_cursor_right_with_pos(&mut self, area_enum: AreaEnum, pos: usize) {
-        match area_enum {
-            AreaEnum::Sql => {
-                if pos < self.sql_input.len() {
-                    self.set_cursor_position(area_enum, pos + 1);
-                }
-            }
-            AreaEnum::Value => {
-                if pos < self.value_input.len() {
-                    self.set_cursor_position(area_enum, pos + 1);
-                }
-            }
-            _ => return,
-        }
-    }
-
-    pub fn move_cursor_home(&mut self) {
-        self.set_cursor_position(self.current_area, 0);
-    }
-
-    pub fn move_cursor_end(&mut self) {
-        match self.current_area {
-            AreaEnum::Sql => {
-                self.set_cursor_position(self.current_area, self.sql_input.len());
-            }
-            AreaEnum::Value => {
-                self.set_cursor_position(self.current_area, self.value_input.len());
-            }
-            _ => return,
-        }
-    }
-
     pub fn input_clear(&mut self) {
-        self.set_cursor_position(self.current_area, 0);
         match self.current_area {
             AreaEnum::Sql => {
                 self.sql_input.clear();
@@ -150,57 +79,27 @@ impl App {
     }
 
     pub fn input_char(&mut self, char: char) {
-        let pos = self.get_cursor_position();
         match self.current_area {
             AreaEnum::Sql => {
-                self.sql_input.insert(pos, char);
+                self.sql_input.push(char);
             }
             AreaEnum::Value => {
-                self.value_input.insert(pos, char);
+                self.value_input.push(char);
             }
             _ => return,
         }
-        self.move_cursor_right_with_pos(self.current_area, pos);
     }
 
     pub fn input_backspace(&mut self) {
-        let pos = self.get_cursor_position();
-        if pos <= 0 {
-            return;
-        }
         match self.current_area {
             AreaEnum::Sql => {
-                self.sql_input.remove(pos - 1);
+                self.sql_input.pop();
             }
             AreaEnum::Value => {
-                self.value_input.remove(pos - 1);
+                self.value_input.pop();
             }
             _ => return,
         }
-        self.move_cursor_left_with_pos(self.current_area, pos);
-    }
-
-    pub fn input_delete(&mut self) {
-        let pos = self.get_cursor_position();
-        // The cursor does not need to move.
-        match self.current_area {
-            AreaEnum::Sql => {
-                if pos < self.sql_input.len() {
-                    self.sql_input.remove(pos);
-                }
-            }
-            AreaEnum::Value => {
-                if pos < self.value_input.len() {
-                    self.value_input.remove(pos);
-                }
-            }
-            _ => return,
-        }
-    }
-
-    pub fn show_cursor(&mut self, area_enum: AreaEnum) -> bool {
-        self.current_area == area_enum
-            && (area_enum == AreaEnum::Sql || area_enum == AreaEnum::Value)
     }
 }
 

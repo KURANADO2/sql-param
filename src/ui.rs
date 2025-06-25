@@ -58,8 +58,6 @@ fn render_body(app: &mut App, frame: &mut Frame, area: Rect, area_enum: AreaEnum
         );
 
     frame.render_widget(paragraph, area);
-
-    render_cursor(app, frame, area, area_enum);
 }
 
 fn render_footer(frame: &mut Frame, area: Rect) {
@@ -72,63 +70,4 @@ fn render_footer(frame: &mut Frame, area: Rect) {
         ),
         area,
     );
-}
-
-fn render_cursor(app: &mut App, frame: &mut Frame, area: Rect, area_enum: AreaEnum) {
-    // whether the cursor needs to be displayed
-    if app.show_cursor(area_enum) {
-        let cursor_pos = app.get_cursor_position();
-        let content = app.content(area_enum);
-        let cursor_coords = calculate_cursor_position(&content, cursor_pos, area);
-        frame.set_cursor_position(cursor_coords);
-    }
-}
-
-fn calculate_cursor_position(content: &str, cursor_pos: usize, area: Rect) -> (u16, u16) {
-    // left border
-    let mut x = area.x + 1;
-    // right border
-    let mut y = area.y + 1;
-    // subtract the left and right borders
-    let max_width = area.width.saturating_sub(2);
-
-    let mut line_count = 0;
-
-    for ch in content.chars() {
-        if line_count >= cursor_pos {
-            break;
-        }
-
-        if ch == '\n' {
-            x = area.x + 1;
-            y += 1;
-            line_count += 1;
-        } else {
-            let char_width = if ch.len_utf8() > 1 { 2 } else { 1 };
-            let current_line_width = x - (area.x + 1);
-            if current_line_width + char_width > max_width {
-                // Auto wrap
-                x = area.x + 1;
-                y += 1;
-            }
-
-            x += char_width;
-            line_count += 1;
-        }
-    }
-
-    // make sure the cursor is within the visible area
-    if x >= area.x + area.width {
-        x = area.x + area.width - 1;
-    }
-    if y >= area.y + area.height {
-        y = area.y + area.height - 1;
-    }
-
-    // make sure the cursor does not go beyond the left boundary
-    if x < area.x + 1 {
-        x = area.x + 1;
-    }
-
-    (x, y)
 }
