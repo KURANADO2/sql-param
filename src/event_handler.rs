@@ -1,5 +1,4 @@
 use crate::app::{App, AreaEnum};
-use crate::core::replace_placeholder;
 use crossterm::event::{
     KeyCode, KeyEvent, KeyEventKind, KeyModifiers, MouseButton, MouseEvent, MouseEventKind,
 };
@@ -19,16 +18,14 @@ pub fn handle_key(app: &mut App, key: KeyEvent) {
             KeyCode::Tab => app.current_area = app.next_area(),
             KeyCode::BackTab => {
                 app.current_area = app.prev_area();
-                app.result =
-                    replace_placeholder(app.get_sql_text().as_str(), app.get_value_text().as_str());
+                app.calculate_result();
             }
             _other => handle_common_key(app, key),
         },
         AreaEnum::Value => match key.code {
             KeyCode::Tab => {
                 app.current_area = app.next_area();
-                app.result =
-                    replace_placeholder(app.get_sql_text().as_str(), app.get_value_text().as_str());
+                app.calculate_result();
             }
             KeyCode::BackTab => app.current_area = app.prev_area(),
             _other => handle_common_key(app, key),
@@ -78,8 +75,7 @@ pub fn handle_mouse(app: &mut App, mouse: MouseEvent) {
         if let Some(clicked_area) = app.get_area_by_coordinate(mouse.column, mouse.row) {
             app.current_area = clicked_area;
             if clicked_area == AreaEnum::Result {
-                app.result =
-                    replace_placeholder(app.get_sql_text().as_str(), app.get_value_text().as_str());
+                app.calculate_result();
             }
         }
     }

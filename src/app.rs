@@ -1,3 +1,4 @@
+use crate::core::replace_placeholder;
 use ratatui::layout::Rect;
 use std::collections::HashMap;
 use strum::IntoEnumIterator;
@@ -109,6 +110,10 @@ impl App {
 
     pub fn get_value_text(&self) -> String {
         self.value_input.lines().join("\n")
+    }
+
+    pub fn calculate_result(&mut self) {
+        self.result = replace_placeholder(self.get_sql_text().as_str(), self.get_value_text().as_str());
     }
 }
 
