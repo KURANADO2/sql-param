@@ -55,6 +55,13 @@ fn render_input(app: &App, frame: &mut Frame, area: Rect, area_enum: AreaEnum) {
         _ => return,
     }
     textarea.set_block(new_block(app, area_enum));
+
+    if app.current_area == area_enum {
+        textarea.set_cursor_style(Style::default().bg(Color::Green));
+    } else {
+        textarea.set_cursor_style(Style::default());
+    }
+
     frame.render_widget(&textarea, area);
 }
 
