@@ -2,10 +2,11 @@ use ratatui::layout::Rect;
 use std::collections::HashMap;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
+use tui_textarea::TextArea;
 
 pub struct App {
-    pub sql_input: String,
-    pub value_input: String,
+    pub sql_input: TextArea<'static>,
+    pub value_input: TextArea<'static>,
     pub result: String,
     pub current_area: AreaEnum,
     pub should_exit: bool,
@@ -22,8 +23,8 @@ pub enum AreaEnum {
 impl App {
     pub fn new() -> App {
         App {
-            sql_input: String::new(),
-            value_input: String::new(),
+            sql_input: TextArea::default(),
+            value_input: TextArea::default(),
             result: String::new(),
             current_area: AreaEnum::Sql,
             should_exit: false,
@@ -45,14 +46,6 @@ impl App {
         all[prev_index]
     }
 
-    pub fn content(&mut self, area_enum: AreaEnum) -> String {
-        match area_enum {
-            AreaEnum::Sql => self.sql_input.clone(),
-            AreaEnum::Value => self.value_input.clone(),
-            AreaEnum::Result => self.result.clone(),
-        }
-    }
-
     pub fn set_area_coordinate(&mut self, area: AreaEnum, rect: Rect) {
         self.area_coordinates.insert(area, rect);
     }
@@ -69,10 +62,10 @@ impl App {
     pub fn input_clear(&mut self) {
         match self.current_area {
             AreaEnum::Sql => {
-                self.sql_input.clear();
+                self.sql_input = TextArea::default();
             }
             AreaEnum::Value => {
-                self.value_input.clear();
+                self.value_input = TextArea::default();
             }
             _ => return,
         }
@@ -81,10 +74,10 @@ impl App {
     pub fn input_char(&mut self, char: char) {
         match self.current_area {
             AreaEnum::Sql => {
-                self.sql_input.push(char);
+                self.sql_input.insert_char(char);
             }
             AreaEnum::Value => {
-                self.value_input.push(char);
+                self.value_input.insert_char(char);
             }
             _ => return,
         }
@@ -93,13 +86,29 @@ impl App {
     pub fn input_backspace(&mut self) {
         match self.current_area {
             AreaEnum::Sql => {
-                self.sql_input.pop();
+                self.sql_input.delete_char();
             }
             AreaEnum::Value => {
-                self.value_input.pop();
+                self.value_input.delete_char();
             }
             _ => return,
         }
+    }
+
+    pub fn get_current_textarea(&mut self) -> Option<&mut TextArea<'static>> {
+        match self.current_area {
+            AreaEnum::Sql => Some(&mut self.sql_input),
+            AreaEnum::Value => Some(&mut self.value_input),
+            _ => None,
+        }
+    }
+
+    pub fn get_sql_text(&self) -> String {
+        self.sql_input.lines().join("\n")
+    }
+
+    pub fn get_value_text(&self) -> String {
+        self.value_input.lines().join("\n")
     }
 }
 

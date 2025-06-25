@@ -9,19 +9,26 @@ pub fn handle_key(app: &mut App, key: KeyEvent) {
         return;
     }
 
+    if key.code == KeyCode::Esc {
+        app.should_exit = true;
+        return;
+    }
+
     match app.current_area {
         AreaEnum::Sql => match key.code {
             KeyCode::Tab => app.current_area = app.next_area(),
             KeyCode::BackTab => {
                 app.current_area = app.prev_area();
-                app.result = replace_placeholder(app.sql_input.as_str(), app.value_input.as_str());
+                app.result =
+                    replace_placeholder(app.get_sql_text().as_str(), app.get_value_text().as_str());
             }
             _other => handle_common_key(app, key),
         },
         AreaEnum::Value => match key.code {
             KeyCode::Tab => {
                 app.current_area = app.next_area();
-                app.result = replace_placeholder(app.sql_input.as_str(), app.value_input.as_str());
+                app.result =
+                    replace_placeholder(app.get_sql_text().as_str(), app.get_value_text().as_str());
             }
             KeyCode::BackTab => app.current_area = app.prev_area(),
             _other => handle_common_key(app, key),
@@ -29,7 +36,6 @@ pub fn handle_key(app: &mut App, key: KeyEvent) {
         AreaEnum::Result => match key.code {
             KeyCode::Tab => app.current_area = app.next_area(),
             KeyCode::BackTab => app.current_area = app.prev_area(),
-            KeyCode::Char('q') => app.should_exit = true,
             _ => return,
         },
     }
@@ -46,6 +52,11 @@ fn handle_common_key(app: &mut App, key: KeyEvent) {
         KeyCode::Backspace => {
             app.input_backspace();
         }
+        KeyCode::Enter => {
+            if let Some(textarea) = app.get_current_textarea() {
+                textarea.insert_newline();
+            }
+        }
         _ => return,
     }
 }
@@ -53,10 +64,10 @@ fn handle_common_key(app: &mut App, key: KeyEvent) {
 pub fn handle_paste(app: &mut App, data: String) {
     match app.current_area {
         AreaEnum::Sql => {
-            app.sql_input.push_str(&data);
+            app.sql_input.insert_str(&data);
         }
         AreaEnum::Value => {
-            app.value_input.push_str(&data);
+            app.value_input.insert_str(&data);
         }
         _ => return,
     }
@@ -67,7 +78,8 @@ pub fn handle_mouse(app: &mut App, mouse: MouseEvent) {
         if let Some(clicked_area) = app.get_area_by_coordinate(mouse.column, mouse.row) {
             app.current_area = clicked_area;
             if clicked_area == AreaEnum::Result {
-                app.result = replace_placeholder(app.sql_input.as_str(), app.value_input.as_str());
+                app.result =
+                    replace_placeholder(app.get_sql_text().as_str(), app.get_value_text().as_str());
             }
         }
     }
