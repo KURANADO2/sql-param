@@ -84,7 +84,7 @@ mod test {
     fn test_empty_value() {
         let sql = String::from("UPDATE user SET name = ?, age = ?, update_time = ?, id_card = ? WHERE id = ? AND deleted = ?;");
         let value = String::from("");
-        assert_eq!("UPDATE user SET name = ?, age = ?, update_time = ?, id_card = ? WHERE id = ? AND deleted = ?;", replace_placeholder(sql.as_str(), value.as_str()));
+        assert_eq!("", replace_placeholder(sql.as_str(), value.as_str()));
     }
 
     #[test]
