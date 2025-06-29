@@ -1,4 +1,5 @@
 use crate::core::replace_placeholder;
+use crate::log_parser::LogParser;
 use arboard::Clipboard;
 use ratatui::layout::Rect;
 use std::collections::HashMap;
@@ -115,6 +116,23 @@ impl App {
             .unwrap()
             .set_text(self.result.as_str())
             .expect("failed to set clipboard");
+    }
+
+    pub fn parse_clipboard(&mut self) {
+        if !self.sql_input.is_empty() || !self.value_input.is_empty() {
+            return;
+        }
+
+        let content = Clipboard::new()
+            .unwrap()
+            .get_text()
+            .expect("failed to get clipboard");
+        if let Some(log_parser) = LogParser::parse_lines(content.lines().collect()) {
+            self.sql_input = TextArea::new(log_parser.sql);
+            self.value_input = TextArea::new(log_parser.value);
+            self.current_area = AreaEnum::Result;
+            self.calculate_result();
+        }
     }
 }
 

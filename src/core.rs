@@ -60,8 +60,17 @@ mod test {
     #[test]
     fn test() {
         let sql = String::from("UPDATE user SET name = ?, age = ?, update_time = ?, id_card = ? WHERE id = ? AND deleted = ?;");
-        let value = String::from("zhangsan(String), 18(Integer), 2025-06-13 16:44:56.499(Timestamp), 123456789(Long), 1(Integer), 0(Integer);");
+        let value = String::from("zhangsan(String), 18(Integer), 2025-06-13 16:44:56.499(Timestamp), 123456789(Long), 1(Integer), 0(Integer)");
         assert_eq!("UPDATE user SET name = 'zhangsan', age = 18, update_time = '2025-06-13 16:44:56.499', id_card = 123456789 WHERE id = 1 AND deleted = 0;", replace_placeholder(sql.as_str(), value.as_str()));
+    }
+
+    #[test]
+    fn test_multiple_sql() {
+        let sql = String::from("SELECT * FROM user WHERE id = ? AND deleted = 0 and sex = ?;\
+        UPDATE user SET name = ?, age = ?, update_time = ?, id_card = ? WHERE id = ? AND deleted = ?;");
+        let value = String::from("1(Long), male(String), \
+        zhangsan(String), 18(Integer), 2025-06-13 16:44:56.499(Timestamp), 123456789(Long), 1(Integer), 0(Integer), ");
+        assert_eq!("SELECT * FROM user WHERE id = 1 AND deleted = 0 and sex = 'male';UPDATE user SET name = 'zhangsan', age = 18, update_time = '2025-06-13 16:44:56.499', id_card = 123456789 WHERE id = 1 AND deleted = 0;", replace_placeholder(sql.as_str(), value.as_str()));
     }
 
     #[test]

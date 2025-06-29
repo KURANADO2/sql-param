@@ -1,6 +1,7 @@
 mod app;
 mod core;
 mod event_handler;
+mod log_parser;
 mod ui;
 
 use crate::app::App;
@@ -50,6 +51,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> Result<(), Box<dyn Error>> {
     while !app.should_exit {
+        // parse clipboard first
+        app.parse_clipboard();
+        // draw ui
         terminal.draw(|f| ui(f, app))?;
         if let Ok(event) = event::read() {
             match event {
