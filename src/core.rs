@@ -26,8 +26,8 @@ fn values(value: &str) -> Vec<Value> {
 }
 
 pub fn replace_placeholder(sql: &str, value: &str) -> String {
-    if value.is_empty() {
-        return sql.to_string();
+    if sql.is_empty() || value.is_empty() {
+        return String::from("");
     }
 
     let mut result = String::new();
