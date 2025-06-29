@@ -123,16 +123,16 @@ impl App {
             return;
         }
 
-        let content = Clipboard::new()
-            .unwrap()
-            .get_text()
-            .expect("failed to get clipboard");
-        if let Some(log_parser) = LogParser::parse_lines(content.lines().collect()) {
-            self.sql_input = TextArea::new(log_parser.sql);
-            self.value_input = TextArea::new(log_parser.value);
-            self.current_area = AreaEnum::Result;
-            self.calculate_result();
-        }
+        if let Ok(mut clipboard) = Clipboard::new() {
+            if let Ok(content) = clipboard.get_text() {
+                if let Some(log_parser) = LogParser::parse_lines(content.lines().collect()) {
+                    self.sql_input = TextArea::new(log_parser.sql);
+                    self.value_input = TextArea::new(log_parser.value);
+                    self.current_area = AreaEnum::Result;
+                    self.calculate_result();
+                }
+            }
+        };
     }
 }
 
