@@ -1,3 +1,5 @@
+use regex::Regex;
+
 const SQL_KEYWORDS: [&str; 8] = [
     "SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "ALTER", "DROP", "WITH",
 ];
@@ -19,14 +21,21 @@ impl LogParser {
         let mut sql_lines: Vec<String> = Vec::new();
         let mut value_lines: Vec<String> = Vec::new();
 
+        // 构造 SQL 正则集合（\b 表示单词边界）
+        let sql_regexes: Vec<Regex> = SQL_KEYWORDS
+            .iter()
+            .map(|kw| Regex::new(&format!(r"\b{}\b", regex::escape(kw))).unwrap())
+            .collect();
+
         for line in lines {
             let upper = line.to_uppercase();
-            if let Some((start_idx, _kw)) = SQL_KEYWORDS
+
+            if let Some(matched) = sql_regexes
                 .iter()
-                .filter_map(|kw| upper.find(kw).map(|idx| (idx, *kw)))
-                .min_by_key(|(idx, _)| *idx)
+                .filter_map(|re| re.find(&upper))
+                .min_by_key(|m| m.start())
             {
-                let sql = line[start_idx..].trim();
+                let sql = &line[matched.start()..].trim();
                 if sql.contains('?') {
                     sql_lines.push(sql.to_string());
                 }
