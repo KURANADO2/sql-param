@@ -1,11 +1,5 @@
 use regex::Regex;
 
-const SQL_KEYWORDS: [&str; 8] = [
-    "SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "ALTER", "DROP", "WITH",
-];
-
-const VALUE_KEYWORDS: [&str; 4] = ["(String)", "(Integer)", "(Timestamp)", "(Long)"];
-
 #[derive(Debug, Eq, PartialEq)]
 pub struct LogParser {
     pub sql: Vec<String>,
@@ -21,35 +15,15 @@ impl LogParser {
         let mut sql_lines: Vec<String> = Vec::new();
         let mut value_lines: Vec<String> = Vec::new();
 
-        // 构造 SQL 正则集合（\b 表示单词边界）
-        let sql_regexes: Vec<Regex> = SQL_KEYWORDS
-            .iter()
-            .map(|kw| Regex::new(&format!(r"\b{}\b", regex::escape(kw))).unwrap())
-            .collect();
+        let sql_regex = Regex::new(r"Preparing:\s*(.+)").unwrap();
+        let value_regex = Regex::new(r"Parameters:\s*(.+)").unwrap();
 
         for line in lines {
-            let upper = line.to_uppercase();
-
-            if let Some(matched) = sql_regexes
-                .iter()
-                .filter_map(|re| re.find(&upper))
-                .min_by_key(|m| m.start())
-            {
-                let sql = &line[matched.start()..].trim();
-                if sql.contains('?') {
-                    sql_lines.push(sql.to_string());
-                }
-                continue;
+            if let Some(caps) = sql_regex.captures(line) {
+                sql_lines.push(caps[1].to_string());
             }
-
-            if let Some(first_kw_pos) = VALUE_KEYWORDS.iter().filter_map(|kw| line.find(kw)).min() {
-                let prefix_cut_pos = line[..first_kw_pos]
-                    .rfind(|c| c == ':')
-                    .map(|idx| idx + 1)
-                    .unwrap_or(0);
-
-                let values_part = line[prefix_cut_pos..].trim().to_string() + ", ";
-                value_lines.push(values_part);
+            if let Some(caps) = value_regex.captures(line) {
+                value_lines.push(caps[1].to_string() + ", ");
             }
         }
 
