@@ -63,3 +63,27 @@ Result:
 ```code
 UPDATE user SET name = 'zhangsan', age = 18, update_time = '2025-06-13 16:44:56.499', id_card = 123456789 WHERE id = 1 AND deleted = 0;
 ```
+
+### By passing arguments
+
+You can execute `sql-param --help` to see the following message:
+
+```bash
+$ sql-param -h
+A tool for automatically replacing sql placeholders
+
+Usage: sql-param [OPTIONS]
+
+Options:
+  -s, --sql <SQL>      SQL statement with placeholders. Example: 'UPDATE user SET name = ?, age = ?, update_time = ?, id_card = ? WHERE id = ? AND deleted = ?;'
+  -v, --value <VALUE>  Parameter values (comma-separated). Example: 'zhangsan(String), 18(Integer), 2025-06-13 16:44:56.499(Timestamp), 123456789(Long), 1(Integer), 0(Integer)'
+  -h, --help           Print help (see more with '--help')
+  -V, --version        Print version
+```
+
+So you can perform SQL value replacement just like this:
+
+```bash
+$ sql-param -s 'UPDATE user SET name = ?, age = ?, update_time = ?, id_card = ? WHERE id = ? AND deleted = ?;' -v 'zhangsan(String), 18(Integer), 2025-06-13 16:44:56.499(Timestamp), 123456789(Long), 1(Integer), 0(Integer)'
+UPDATE user SET name = 'zhangsan', age = 18, update_time = '2025-06-13 16:44:56.499', id_card = 123456789 WHERE id = 1 AND deleted = 0; 
+```
