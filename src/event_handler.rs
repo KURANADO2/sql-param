@@ -33,6 +33,9 @@ pub fn handle_key(app: &mut App, key: KeyEvent) {
         AreaEnum::Result => match key.code {
             KeyCode::Tab => app.current_area = app.next_area(),
             KeyCode::BackTab => app.current_area = app.prev_area(),
+            KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                app.input_clear();
+            },
             _ => return,
         },
     }
