@@ -10,7 +10,7 @@ cargo install sql-param
 
 ## Usage
 
-### Automatic mode
+### Automatic mode(Recommended)
 
 Simply copy the SQL log, then run the `sql-param` command. The program will automatically attempt to read the contents
 of your system clipboard, extract the SQL with placeholders and the corresponding values, and populate them into the Sql
@@ -58,7 +58,7 @@ Value:
 zhangsan(String), 18(Integer), 2025-06-13 16:44:56.499(Timestamp), 123456789(Long), 1(Integer), 0(Integer)
 ```
 
-Result
+Result:
 
 ```code
 UPDATE user SET name = 'zhangsan', age = 18, update_time = '2025-06-13 16:44:56.499', id_card = 123456789 WHERE id = 1 AND deleted = 0;
