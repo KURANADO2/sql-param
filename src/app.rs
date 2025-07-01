@@ -70,7 +70,11 @@ impl App {
             AreaEnum::Value => {
                 self.value_input = TextArea::default();
             }
-            _ => return,
+            AreaEnum::Result => {
+                self.sql_input = TextArea::default();
+                self.value_input = TextArea::default();
+                self.result = String::new();
+            }
         }
     }
 
@@ -125,6 +129,9 @@ impl App {
 
         if let Ok(mut clipboard) = Clipboard::new() {
             if let Ok(content) = clipboard.get_text() {
+                if content == self.result.as_str() {
+                    return;
+                }
                 if let Some(log_parser) = LogParser::parse_lines(content.lines().collect()) {
                     self.sql_input = TextArea::new(log_parser.sql);
                     self.value_input = TextArea::new(log_parser.value);
