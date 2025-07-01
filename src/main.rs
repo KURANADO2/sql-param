@@ -1,4 +1,5 @@
 mod app;
+mod argument;
 mod core;
 mod event_handler;
 mod log_parser;
@@ -20,7 +21,12 @@ use std::error::Error;
 use std::io;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    // setup terminal
+    // Arguments mode
+    if let Some(value) = argument::parse_arguments() {
+        return value;
+    }
+
+    // TUI mode: setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(
